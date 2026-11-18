@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Cinnamon Roll",
+    "pitch": "A baked roll pastry topped with icing",
+    "label": "handmade",
+    "image": "rolls.jpeg"
+  },
+  {
+    "name": "Paper Crane",
+    "pitch": "An traditional origami folding in the shape of a paper crane",
+    "label": "handmade",
+    "image": "papercrane.jpeg"
+  },
+  {
+    "name": "Sketch",
+    "pitch": "A quick drawing created with lead",
+    "label": "handmade",
+    "image": "sketch.jpg"
+  }
+]
