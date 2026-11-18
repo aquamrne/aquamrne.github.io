@@ -3,35 +3,770 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>aquamrne</title>
+  <title>aquamrne · things I make by hand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Karla:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --ink: #14211f;
+      --ink-soft: #41524f;
+      --paper: #edf2f0;
+      --card: #fbfdfc;
+      --mist: #dce7e4;
+      --aqua: #6fc5b8;
+      --aqua-deep: #2c6a63;
+      --line: rgba(20, 33, 31, .14);
+      --display: "Fraunces", "Iowan Old Style", Georgia, serif;
+      --body: "Karla", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      --bar-h: 64px;
+      --pad: clamp(18px, 5vw, 64px);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-text-size-adjust: 100%;
+    }
+
     body {
       margin: 0;
-      min-height: 100vh;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--body);
+      font-size: 1.02rem;
+      line-height: 1.62;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--aqua-deep);
+      outline-offset: 3px;
+    }
+
+    /* Bar that stays while you scroll */
+    .bar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      height: var(--bar-h);
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: #111;
-      color: #f4f4f4;
-      font-family: system-ui, sans-serif;
-      text-align: center;
-      padding: 24px;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 0 var(--pad);
+      color: #f2f8f6;
+      transition: background-color .35s ease, color .35s ease, box-shadow .35s ease;
     }
-    h1 {
-      margin: 0;
-      font-size: clamp(2rem, 10vw, 3.5rem);
+
+    .bar.is-scrolled {
+      background: rgba(237, 242, 240, .92);
+      color: var(--ink);
+      box-shadow: inset 0 -1px 0 var(--line);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
     }
-    p {
+
+    .bar__brand {
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: 1.12rem;
+      letter-spacing: -.01em;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .bar__link {
+      font-size: .95rem;
+      color: inherit;
+      text-decoration: none;
+      padding: 6px 2px;
+      border-bottom: 1px solid transparent;
+      transition: border-color .3s ease;
+    }
+
+    .bar__link:hover {
+      border-bottom-color: currentColor;
+    }
+
+    .bar :focus-visible {
+      outline-color: currentColor;
+    }
+
+    /* Big top section */
+    .hero {
+      position: relative;
+      isolation: isolate;
+      display: grid;
+      align-items: end;
+      min-height: 74vh;
+      min-height: min(80svh, 820px);
+      margin-top: calc(-1 * var(--bar-h));
+      padding: calc(var(--bar-h) + 40px) var(--pad) clamp(28px, 6vw, 68px);
+      overflow: hidden;
+      background: var(--ink);
+    }
+
+    .hero__media {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background: var(--ink);
+    }
+
+    .hero__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: saturate(.74) contrast(.98) brightness(.9);
+    }
+
+    .hero__media .ph {
+      height: 100%;
+    }
+
+    .hero__veil {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(180deg, rgba(16, 33, 31, .5) 0%, rgba(16, 33, 31, .12) 40%, rgba(14, 30, 28, .88) 100%),
+        repeating-linear-gradient(90deg, rgba(233, 245, 242, .055) 0 1px, transparent 1px 8px);
+    }
+
+    .hero__inner {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      display: grid;
+      justify-items: start;
+      gap: 20px;
+      color: #f2f8f6;
+    }
+
+    .hero__title {
       margin: 0;
-      font-size: clamp(1rem, 4vw, 1.25rem);
-      color: #a0a0a0;
+      font-family: var(--display);
+      font-weight: 600;
+      font-size: clamp(2.9rem, 11vw, 6.6rem);
+      line-height: .94;
+      letter-spacing: -.03em;
+    }
+
+    .hero__line {
+      margin: 0;
+      max-width: 34ch;
+      font-size: clamp(1.04rem, 2.4vw, 1.28rem);
+      color: rgba(242, 248, 246, .88);
+    }
+
+    .hero__cue {
+      appearance: none;
+      cursor: pointer;
+      font: inherit;
+      font-size: .98rem;
+      color: #f2f8f6;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: 1px solid rgba(242, 248, 246, .55);
+      background: rgba(242, 248, 246, .09);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      transition: background-color .35s ease, color .35s ease, border-color .35s ease;
+    }
+
+    .hero__cue:hover {
+      background: var(--aqua);
+      border-color: var(--aqua);
+      color: #0d2622;
+    }
+
+    .hero__cue[hidden] {
+      display: none;
+    }
+
+    /* Products */
+    .products {
+      width: 100%;
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: clamp(48px, 8vw, 100px) var(--pad) clamp(52px, 9vw, 104px);
+    }
+
+    .products__head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px 24px;
+      padding-bottom: 14px;
+      margin-bottom: clamp(24px, 4vw, 40px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .products__title {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.55rem, 4vw, 2.4rem);
+      line-height: 1.12;
+      letter-spacing: -.015em;
+    }
+
+    .products__note {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: .96rem;
+    }
+
+    .grid {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: clamp(18px, 2.6vw, 30px);
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+
+    .card__tap {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      text-align: left;
+      font: inherit;
+      color: inherit;
+      cursor: pointer;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: border-color .4s ease, transform .4s ease, box-shadow .4s ease;
+    }
+
+    .card__tap:hover {
+      border-color: rgba(44, 106, 99, .42);
+      transform: translateY(-3px);
+      box-shadow: 0 18px 34px -24px rgba(16, 33, 31, .62);
+    }
+
+    .card__media {
+      display: block;
+      position: relative;
+      aspect-ratio: 4 / 3;
+      overflow: hidden;
+      background: var(--mist);
+    }
+
+    .card__media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform .7s cubic-bezier(.2, .7, .3, 1);
+    }
+
+    .card__tap:hover .card__media img {
+      transform: scale(1.035);
+    }
+
+    .card__body {
+      display: block;
+      padding: 16px 18px 20px;
+    }
+
+    .card__name {
+      display: block;
+      margin-top: 8px;
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: 1.34rem;
+      line-height: 1.25;
+      letter-spacing: -.01em;
+    }
+
+    .card__pitch {
+      display: block;
+      margin-top: 4px;
+      color: var(--ink-soft);
+      font-size: .97rem;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: .78rem;
+      line-height: 1.4;
+      letter-spacing: .01em;
+      color: #1e5751;
+      background: rgba(111, 197, 184, .24);
+      border: 1px solid rgba(44, 106, 99, .2);
+    }
+
+    /* Neat placeholder when a product has no photo */
+    .ph {
+      display: grid;
+      place-items: center;
+      width: 100%;
+      height: 100%;
+      min-height: 120px;
+      background:
+        repeating-linear-gradient(112deg, rgba(44, 106, 99, .1) 0 1px, transparent 1px 9px),
+        var(--mist);
+    }
+
+    .ph__initial {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(2rem, 6vw, 2.8rem);
+      color: var(--aqua-deep);
+      opacity: .8;
+    }
+
+    .error {
+      margin: 0 0 24px;
+      padding: 16px 18px;
+      border: 1px solid rgba(130, 74, 52, .3);
+      border-radius: 10px;
+      background: #f7efe9;
+      color: #6c3a25;
+    }
+
+    .error[hidden] {
+      display: none;
+    }
+
+    /* Detail view */
+    .sheet {
+      width: min(880px, 92vw);
+      max-width: none;
+      max-height: min(90vh, 900px);
+      padding: 0;
+      border: none;
+      border-radius: 12px;
+      background: var(--card);
+      color: var(--ink);
+      overflow: auto;
+    }
+
+    .sheet::backdrop {
+      background: rgba(11, 24, 22, .64);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+    }
+
+    .sheet[open] {
+      animation: sheet-rise .45s cubic-bezier(.2, .7, .3, 1);
+    }
+
+    @keyframes sheet-rise {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+    }
+
+    .sheet__media {
+      background: var(--mist);
+    }
+
+    .sheet__media img {
+      width: 100%;
+      max-height: 54vh;
+      object-fit: cover;
+      display: block;
+    }
+
+    .sheet__media .ph {
+      min-height: 42vh;
+    }
+
+    .sheet__text {
+      padding: 22px clamp(20px, 4vw, 34px) clamp(24px, 4vw, 32px);
+    }
+
+    .sheet__name {
+      margin: 10px 0 0;
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: clamp(1.6rem, 4.4vw, 2.3rem);
+      line-height: 1.15;
+      letter-spacing: -.015em;
+    }
+
+    .sheet__pitch {
+      margin: 8px 0 0;
+      max-width: 52ch;
+      color: var(--ink-soft);
+      font-size: 1.02rem;
+    }
+
+    .sheet__close {
+      appearance: none;
+      cursor: pointer;
+      font: inherit;
+      font-size: .96rem;
+      margin-top: 22px;
+      padding: 11px 20px;
+      border-radius: 999px;
+      border: 1px solid rgba(44, 106, 99, .34);
+      background: transparent;
+      color: var(--aqua-deep);
+      transition: background-color .3s ease, color .3s ease;
+    }
+
+    .sheet__close:hover {
+      background: var(--aqua-deep);
+      border-color: var(--aqua-deep);
+      color: #f2f8f6;
+    }
+
+    @media (max-width: 640px) {
+      .sheet {
+        width: 100vw;
+        height: 100%;
+        max-height: none;
+        border-radius: 0;
+      }
+
+      .sheet__media img {
+        max-height: 46vh;
+      }
+    }
+
+    /* Gentle motion, only when the page scrolls or a card is hovered */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity .8s ease, transform .8s cubic-bezier(.2, .7, .3, 1);
+    }
+
+    .reveal.is-in {
+      opacity: 1;
+      transform: none;
+    }
+
+    .hero__inner {
+      animation: hero-in 1s cubic-bezier(.2, .7, .3, 1) both;
+    }
+
+    @keyframes hero-in {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+    }
+
+    .foot {
+      border-top: 1px solid var(--line);
+      padding: 24px var(--pad) 40px;
+    }
+
+    .foot__text {
+      max-width: 1180px;
+      margin: 0 auto;
+      color: var(--ink-soft);
+      font-size: .92rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none;
+      }
+
+      .card__tap:hover,
+      .card__tap:hover .card__media img {
+        transform: none;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Hello world!</h1>
-  <p>aquamrne</p>
+  <header class="bar" id="bar">
+    <a class="bar__brand" href="#top">aquamrne</a>
+    <nav aria-label="Page">
+      <a class="bar__link" href="#products">Products</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero__media" id="heroMedia"></div>
+      <div class="hero__veil"></div>
+      <div class="hero__inner">
+        <h1 class="hero__title" id="hero-title">aquamrne</h1>
+        <p class="hero__line">Drawings in lead, rolls baked and iced, paper folded into cranes. Three things I made by hand.</p>
+        <button class="hero__cue" id="heroCue" type="button" hidden>Look closer</button>
+      </div>
+    </section>
+
+    <section class="products" id="products" aria-labelledby="products-title">
+      <div class="products__head">
+        <h2 class="products__title" id="products-title">What I make</h2>
+        <p class="products__note">Tap a card to see it bigger.</p>
+      </div>
+      <p class="error" id="error" role="alert" hidden>Can't read products.json — check for a missing comma or quote.</p>
+      <ul class="grid" id="grid"></ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p class="foot__text">Everything here is made by hand by aquamrne. Photos are my own.</p>
+  </footer>
+
+  <dialog class="sheet" id="sheet" aria-labelledby="sheetName">
+    <div class="sheet__media" id="sheetMedia"></div>
+    <div class="sheet__text">
+      <span class="pill" id="sheetLabel"></span>
+      <h2 class="sheet__name" id="sheetName"></h2>
+      <p class="sheet__pitch" id="sheetPitch"></p>
+      <button class="sheet__close" id="sheetClose" type="button">Back to my products</button>
+    </div>
+  </dialog>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var grid = document.getElementById('grid');
+      var errorEl = document.getElementById('error');
+      var sheet = document.getElementById('sheet');
+      var sheetMedia = document.getElementById('sheetMedia');
+      var sheetLabel = document.getElementById('sheetLabel');
+      var sheetName = document.getElementById('sheetName');
+      var sheetPitch = document.getElementById('sheetPitch');
+      var sheetClose = document.getElementById('sheetClose');
+      var heroMedia = document.getElementById('heroMedia');
+      var heroCue = document.getElementById('heroCue');
+      var bar = document.getElementById('bar');
+      var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var watcher = null;
+
+      function photoPath(image) {
+        if (!image) return '';
+        var value = String(image).trim();
+        if (!value) return '';
+        if (/^(https?:)?\/\//i.test(value)) return value;
+        if (value.indexOf('/') === 0) return value;
+        if (value.indexOf('../') === 0) return value;
+        if (value.indexOf('images/') === 0) return value;
+        return 'images/' + value;
+      }
+
+      function placeholderFor(name) {
+        var box = document.createElement('span');
+        box.className = 'ph';
+        box.setAttribute('aria-hidden', 'true');
+        var letter = document.createElement('span');
+        letter.className = 'ph__initial';
+        var first = String(name || '?').trim().charAt(0);
+        letter.textContent = first ? first.toUpperCase() : '?';
+        box.appendChild(letter);
+        return box;
+      }
+
+      function photoFor(product, altText) {
+        var img = new Image();
+        img.className = 'photo';
+        img.src = photoPath(product.image);
+        img.alt = altText;
+        img.decoding = 'async';
+        return img;
+      }
+
+      function openDetail(product) {
+        var src = photoPath(product.image);
+        sheetMedia.replaceChildren();
+        if (src) {
+          var img = photoFor(product, 'A bigger photo of ' + product.name);
+          img.addEventListener('error', function () {
+            sheetMedia.replaceChildren(placeholderFor(product.name));
+          });
+          sheetMedia.appendChild(img);
+        } else {
+          sheetMedia.appendChild(placeholderFor(product.name));
+        }
+        sheetLabel.textContent = product.label || '';
+        sheetLabel.hidden = !product.label;
+        sheetName.textContent = product.name;
+        sheetPitch.textContent = product.pitch || '';
+        if (typeof sheet.showModal === 'function') {
+          sheet.showModal();
+        } else {
+          sheet.setAttribute('open', '');
+        }
+      }
+
+      function makeCard(product) {
+        var item = document.createElement('li');
+        item.className = 'card reveal';
+
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'card__tap';
+        button.setAttribute('aria-haspopup', 'dialog');
+
+        var media = document.createElement('span');
+        media.className = 'card__media';
+        var src = photoPath(product.image);
+        if (src) {
+          var img = photoFor(product, 'Photo of ' + product.name);
+          img.loading = 'lazy';
+          img.addEventListener('error', function () {
+            media.replaceChildren(placeholderFor(product.name));
+          });
+          media.appendChild(img);
+        } else {
+          media.appendChild(placeholderFor(product.name));
+        }
+        button.appendChild(media);
+
+        var body = document.createElement('span');
+        body.className = 'card__body';
+
+        if (product.label) {
+          var pill = document.createElement('span');
+          pill.className = 'pill';
+          pill.textContent = product.label;
+          body.appendChild(pill);
+        }
+
+        var name = document.createElement('span');
+        name.className = 'card__name';
+        name.textContent = product.name;
+        body.appendChild(name);
+
+        var pitch = document.createElement('span');
+        pitch.className = 'card__pitch';
+        pitch.textContent = product.pitch || '';
+        body.appendChild(pitch);
+
+        button.appendChild(body);
+        button.addEventListener('click', function () {
+          openDetail(product);
+        });
+
+        item.appendChild(button);
+        return item;
+      }
+
+      function revealCards() {
+        var cards = grid.querySelectorAll('.reveal');
+        if (!motionOK || typeof IntersectionObserver !== 'function') {
+          for (var i = 0; i < cards.length; i += 1) {
+            cards[i].classList.add('is-in');
+          }
+          return;
+        }
+        if (!watcher) {
+          watcher = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-in');
+                watcher.unobserve(entry.target);
+              }
+            });
+          }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+        }
+        for (var j = 0; j < cards.length; j += 1) {
+          watcher.observe(cards[j]);
+        }
+      }
+
+      function showHero(products) {
+        var featured = null;
+        for (var i = 0; i < products.length; i += 1) {
+          if (photoPath(products[i].image)) {
+            featured = products[i];
+            break;
+          }
+        }
+        if (!featured) featured = products[0];
+        if (!featured) return;
+
+        var src = photoPath(featured.image);
+        if (src) {
+          heroMedia.replaceChildren(photoFor(featured, 'Photo of ' + featured.name));
+        } else {
+          heroMedia.replaceChildren(placeholderFor(featured.name));
+        }
+        heroCue.textContent = 'Look closer at the ' + featured.name;
+        heroCue.hidden = false;
+        heroCue.addEventListener('click', function () {
+          openDetail(featured);
+        });
+      }
+
+      function showProducts(products) {
+        grid.replaceChildren();
+        for (var i = 0; i < products.length; i += 1) {
+          grid.appendChild(makeCard(products[i]));
+        }
+        revealCards();
+      }
+
+      function onScroll() {
+        if (window.scrollY > 24) {
+          bar.classList.add('is-scrolled');
+        } else {
+          bar.classList.remove('is-scrolled');
+        }
+      }
+
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+
+      sheetClose.addEventListener('click', function () {
+        sheet.close();
+      });
+
+      sheet.addEventListener('click', function (event) {
+        if (event.target === sheet) {
+          sheet.close();
+        }
+      });
+
+      fetch('products.json', { cache: 'no-store' })
+        .then(function (response) {
+          if (!response.ok) throw new Error('products.json was not found');
+          return response.json();
+        })
+        .then(function (data) {
+          if (!Array.isArray(data)) throw new Error('products.json is not a list');
+          var products = data.filter(function (product) {
+            return product && product.name;
+          });
+          errorEl.hidden = true;
+          showHero(products);
+          showProducts(products);
+        })
+        .catch(function () {
+          grid.replaceChildren();
+          errorEl.hidden = false;
+        });
+    })();
+  </script>
 </body>
 </html>
