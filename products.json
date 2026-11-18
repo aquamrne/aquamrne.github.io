@@ -1,5 +1,11 @@
 [
   {
+    "name": "Chocolate Chip Cookie",
+    "pitch": "A buttery cookie homebaked and generously added with chocolate chips",
+    "label": "handmade",
+    "image": "cookie.jpg"
+  },
+  {
     "name": "Cinnamon Roll",
     "pitch": "A baked roll pastry topped with icing",
     "label": "handmade",
