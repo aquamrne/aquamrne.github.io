@@ -62,13 +62,8 @@
       justify-content: space-between;
       gap: 16px;
       padding: 0 var(--pad);
-      color: #f2f8f6;
-      transition: background-color .35s ease, color .35s ease, box-shadow .35s ease;
-    }
-
-    .bar.is-scrolled {
-      background: rgba(237, 242, 240, .92);
       color: var(--ink);
+      background: rgba(237, 242, 240, .94);
       box-shadow: inset 0 -1px 0 var(--line);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
@@ -106,10 +101,9 @@
       isolation: isolate;
       display: grid;
       align-items: end;
-      min-height: 74vh;
-      min-height: min(80svh, 820px);
-      margin-top: calc(-1 * var(--bar-h));
-      padding: calc(var(--bar-h) + 40px) var(--pad) clamp(28px, 6vw, 68px);
+      min-height: 72vh;
+      min-height: min(78svh, 800px);
+      padding: clamp(36px, 7vw, 84px) var(--pad) clamp(28px, 6vw, 68px);
       overflow: hidden;
       background: var(--ink);
     }
@@ -445,14 +439,18 @@
 
     /* Gentle motion, only when the page scrolls or a card is hovered */
     .reveal {
-      opacity: 0;
-      transform: translateY(14px);
-      transition: opacity .8s ease, transform .8s cubic-bezier(.2, .7, .3, 1);
+      opacity: 1;
     }
 
     .reveal.is-in {
-      opacity: 1;
-      transform: none;
+      animation: card-in .8s cubic-bezier(.2, .7, .3, 1) both;
+    }
+
+    @keyframes card-in {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
     }
 
     .hero__inner {
@@ -560,19 +558,33 @@
       var sheetClose = document.getElementById('sheetClose');
       var heroMedia = document.getElementById('heroMedia');
       var heroCue = document.getElementById('heroCue');
-      var bar = document.getElementById('bar');
       var motionOK = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var watcher = null;
 
-      function photoPath(image) {
-        if (!image) return '';
-        var value = String(image).trim();
-        if (!value) return '';
-        if (/^(https?:)?\/\//i.test(value)) return value;
-        if (value.indexOf('/') === 0) return value;
-        if (value.indexOf('../') === 0) return value;
-        if (value.indexOf('images/') === 0) return value;
-        return 'images/' + value;
+      function candidatesFor(image) {
+        var raw = String(image || '').trim();
+        if (!raw) return [];
+        if (/^(https?:)?\/\//i.test(raw)) return [raw];
+
+        var bases = [];
+        if (raw.indexOf('/') !== -1) {
+          bases.push(raw);
+        } else {
+          bases.push('images/' + raw);
+          bases.push('Images/' + raw);
+          bases.push(raw);
+        }
+
+        var paths = [];
+        for (var i = 0; i < bases.length; i += 1) {
+          paths.push(bases[i]);
+          if (/\.jpe?g$/i.test(bases[i])) {
+            paths.push(bases[i].replace(/\.jpe?g$/i, function (match) {
+              return match.toLowerCase() === '.jpg' ? '.jpeg' : '.jpg';
+            }));
+          }
+        }
+        return paths;
       }
 
       function placeholderFor(name) {
@@ -587,27 +599,43 @@
         return box;
       }
 
-      function photoFor(product, altText) {
+      function photoFor(product, altText, onFail) {
+        var paths = candidatesFor(product.image);
+        if (!paths.length) {
+          onFail();
+          return null;
+        }
+
         var img = new Image();
         img.className = 'photo';
-        img.src = photoPath(product.image);
         img.alt = altText;
         img.decoding = 'async';
+
+        var next = 0;
+        img.addEventListener('error', function () {
+          next += 1;
+          if (next < paths.length) {
+            img.src = paths[next];
+          } else {
+            onFail();
+          }
+        });
+
+        img.src = paths[0];
+        return img;
+      }
+
+      function mountPhoto(box, product, altText) {
+        box.replaceChildren();
+        var img = photoFor(product, altText, function () {
+          box.replaceChildren(placeholderFor(product.name));
+        });
+        if (img) box.appendChild(img);
         return img;
       }
 
       function openDetail(product) {
-        var src = photoPath(product.image);
-        sheetMedia.replaceChildren();
-        if (src) {
-          var img = photoFor(product, 'A bigger photo of ' + product.name);
-          img.addEventListener('error', function () {
-            sheetMedia.replaceChildren(placeholderFor(product.name));
-          });
-          sheetMedia.appendChild(img);
-        } else {
-          sheetMedia.appendChild(placeholderFor(product.name));
-        }
+        mountPhoto(sheetMedia, product, 'A bigger photo of ' + product.name);
         sheetLabel.textContent = product.label || '';
         sheetLabel.hidden = !product.label;
         sheetName.textContent = product.name;
@@ -630,17 +658,8 @@
 
         var media = document.createElement('span');
         media.className = 'card__media';
-        var src = photoPath(product.image);
-        if (src) {
-          var img = photoFor(product, 'Photo of ' + product.name);
-          img.loading = 'lazy';
-          img.addEventListener('error', function () {
-            media.replaceChildren(placeholderFor(product.name));
-          });
-          media.appendChild(img);
-        } else {
-          media.appendChild(placeholderFor(product.name));
-        }
+        var cardImg = mountPhoto(media, product, 'Photo of ' + product.name);
+        if (cardImg) cardImg.loading = 'lazy';
         button.appendChild(media);
 
         var body = document.createElement('span');
@@ -698,7 +717,7 @@
       function showHero(products) {
         var featured = null;
         for (var i = 0; i < products.length; i += 1) {
-          if (photoPath(products[i].image)) {
+          if (candidatesFor(products[i].image).length) {
             featured = products[i];
             break;
           }
@@ -706,12 +725,8 @@
         if (!featured) featured = products[0];
         if (!featured) return;
 
-        var src = photoPath(featured.image);
-        if (src) {
-          heroMedia.replaceChildren(photoFor(featured, 'Photo of ' + featured.name));
-        } else {
-          heroMedia.replaceChildren(placeholderFor(featured.name));
-        }
+        var heroImg = mountPhoto(heroMedia, featured, 'Photo of ' + featured.name);
+        if (heroImg) heroImg.setAttribute('fetchpriority', 'high');
         heroCue.textContent = 'Look closer at the ' + featured.name;
         heroCue.hidden = false;
         heroCue.addEventListener('click', function () {
@@ -726,17 +741,6 @@
         }
         revealCards();
       }
-
-      function onScroll() {
-        if (window.scrollY > 24) {
-          bar.classList.add('is-scrolled');
-        } else {
-          bar.classList.remove('is-scrolled');
-        }
-      }
-
-      window.addEventListener('scroll', onScroll, { passive: true });
-      onScroll();
 
       sheetClose.addEventListener('click', function () {
         sheet.close();
