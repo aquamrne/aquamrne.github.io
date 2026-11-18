@@ -515,7 +515,7 @@
       <div class="hero__veil"></div>
       <div class="hero__inner">
         <h1 class="hero__title" id="hero-title">aquamrne</h1>
-        <p class="hero__line">Drawings in lead, rolls baked and iced, paper folded into cranes. Three things I made by hand.</p>
+        <p class="hero__line">Bakes, drawings and folded paper — everything here is made by hand.</p>
         <button class="hero__cue" id="heroCue" type="button" hidden>Look closer</button>
       </div>
     </section>
@@ -714,15 +714,22 @@
         }
       }
 
-      function showHero(products) {
-        var featured = null;
+      function featuredProduct(products) {
         for (var i = 0; i < products.length; i += 1) {
-          if (candidatesFor(products[i].image).length) {
-            featured = products[i];
-            break;
+          if (String(products[i].name || '').toLowerCase().indexOf('cinnamon') !== -1) {
+            return products[i];
           }
         }
-        if (!featured) featured = products[0];
+        for (var j = 0; j < products.length; j += 1) {
+          if (candidatesFor(products[j].image).length) {
+            return products[j];
+          }
+        }
+        return products[0];
+      }
+
+      function showHero(products) {
+        var featured = featuredProduct(products);
         if (!featured) return;
 
         var heroImg = mountPhoto(heroMedia, featured, 'Photo of ' + featured.name);
